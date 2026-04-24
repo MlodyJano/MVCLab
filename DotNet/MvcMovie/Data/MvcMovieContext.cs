@@ -13,6 +13,15 @@ namespace MvcMovie.Data
             : base(options)
         {
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Movie>()
+                .Property(m => m.Price)
+                .HasPrecision(18, 2); // lub inna precyzja, jeśli potrzebujesz
+
+            base.OnModelCreating(modelBuilder);
+        }
+
 
         public DbSet<MvcMovie.Models.Movie> Movie { get; set; } = default!;
     }
