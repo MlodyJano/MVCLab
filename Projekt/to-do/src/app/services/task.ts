@@ -10,7 +10,10 @@ export class TaskService {
   constructor() {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('myTasks');
-      this.tasks = saved ? JSON.parse(saved) : [];
+      this.tasks = saved ? JSON.parse(saved).map((t: any) => ({
+        ...t,
+        priority: t.priority || 'low' 
+  })) : [];
     }
   }
   getTasks(): Task[] {
@@ -20,13 +23,14 @@ export class TaskService {
     return this.tasks.find(t => t.id === id);
   }
 
-  addTask(title: string, description: string, date: string) {
+  addTask(title: string, description: string, date: string, priority: 'low' | 'medium' | 'high') {
     const newTask: Task = {
       id: Date.now(),
       title: title,
       description: description,
       date: date,
-      completed: false
+      completed: false,
+      priority: priority
     };
     this.tasks.push(newTask);
     this.saveTasks();

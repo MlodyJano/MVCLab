@@ -26,6 +26,14 @@
             <label class="form-label fw-bold">Opis zadania</label>
             <textarea class="form-control" rows="3" [(ngModel)]="newTask.description" placeholder="Dodaj szczegóły..."></textarea>
           </div>
+          <div class="mb-3">
+          <label class="form-label fw-bold"><i class="bi bi-flag-fill"></i> Priorytet</label>
+          <select class="form-select" [(ngModel)]="newTask.priority">
+            <option value="low">Niski (Zielony)</option>
+            <option value="medium">Średni (Żółty)</option>
+            <option value="high">Wysoki (Czerwony)</option>
+          </select>
+        </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
@@ -37,7 +45,10 @@
 
 <ul class="list-group shadow-sm">
   @for (task of tasks; track task.id) {
-    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+    <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-0 border-start border-4 mb-2 shadow-sm"
+      [class.border-success]="task.priority === 'low'"
+      [class.border-warning]="task.priority === 'medium'"
+      [class.border-danger]="task.priority === 'high'">
       
       <div class="flex-grow-1">
         @if (editId === task.id) {
@@ -57,6 +68,13 @@
                     [class.fw-bold]="isOverdue(task.date) && !task.completed"
                     class="h5 d-block mb-0">
                 {{ task.title }}
+                
+                <span class="badge rounded-pill ms-2 text-uppercase" style="font-size: 0.6em;"
+                      [class.bg-success]="task.priority === 'low'"
+                      [class.bg-warning]="task.priority === 'medium'"
+                      [class.bg-danger]="task.priority === 'high'">
+                  {{ task.priority }}
+                </span>
               </span>
 
               <small class="text-muted d-block mt-1">
@@ -79,9 +97,15 @@
 
       @if (editId !== task.id) {
         <div class="ms-3">
-          <button class="btn btn-info btn-sm me-1" [routerLink]="['/tasks', task.id]">Szczegóły <i class="bi bi-pencil-square"></i></button>
-          <button class="btn btn-warning btn-sm me-1" (click)="startEdit(task)">Edytuj <i class="bi bi-pencil"></i></button>
-          <button class="btn btn-danger btn-sm" (click)="deleteTask(task.id)">Usuń <i class="bi bi-trash"></i></button>
+          <button class="btn btn-info btn-sm me-1" [routerLink]="['/tasks', task.id]">
+            Szczegóły <i class="bi bi-eye"></i>
+          </button>
+          <button class="btn btn-warning btn-sm me-1" (click)="startEdit(task)">
+            Edytuj <i class="bi bi-pencil"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="deleteTask(task.id)">
+            Usuń <i class="bi bi-trash"></i>
+          </button>
         </div>
       }
     </li>

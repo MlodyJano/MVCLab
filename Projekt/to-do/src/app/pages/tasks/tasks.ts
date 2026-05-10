@@ -20,14 +20,15 @@ export class Tasks {
   newTask = {
     title: '',
     description: '',
-    date: ''
+    date: '',
+      priority: 'low' as 'low' | 'medium' | 'high'
   };
 
   addTask() {
     if (this.newTask.title && this.newTask.date) {
-      this.taskService.addTask(this.newTask.title, this.newTask.description, this.newTask.date);
+      this.taskService.addTask(this.newTask.title, this.newTask.description, this.newTask.date, this.newTask.priority);
       // Reset formularza
-      this.newTask = { title: '', description: '', date: '' };
+      this.newTask = { title: '', description: '', date: '', priority: 'low' };
     }
   }
 
@@ -51,7 +52,7 @@ export class Tasks {
   saveEdit(id: number) {
     if (this.editTitle.trim()) {
       this.taskService.updateTask(id, this.editTitle);
-      this.editId = null; // Wyjście z trybu edycji
+      this.editId = null; 
     }
   }
 
@@ -66,7 +67,7 @@ export class Tasks {
   isOverdue(taskDate: string): boolean {
   if (!taskDate) return false;
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Resetujemy czas, żeby liczył się tylko dzień
+  today.setHours(0, 0, 0, 0); 
   const taskD = new Date(taskDate);
   return taskD < today;
   }
