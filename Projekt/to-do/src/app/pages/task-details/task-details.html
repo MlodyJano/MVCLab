@@ -1,0 +1,21 @@
+@if (task) {
+  <div class="container mt-4">
+    <div class="card shadow">
+      <div class="card-header d-flex justify-content-between">
+        <h3>{{ task.title }}</h3>
+        <span class="badge bg-info text-dark">{{ task.date }}</span>
+      </div>
+      <div class="card-body">
+        <h5>Opis:</h5>
+        <p class="lead">{{ task.description || 'Brak opisu' }}</p>
+        <hr>
+        <p>Status: <strong>{{ task.completed ? 'Ukończone' : 'W trakcie' }}</strong></p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-secondary" routerLink="/tasks">Powrót do listy</button>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="alert alert-danger">Nie znaleziono zadania!</div>
+}

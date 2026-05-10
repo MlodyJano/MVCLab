@@ -1,7 +1,42 @@
 <div class="container mt-5">
-  <div class="card p-4 shadow-sm">
-    <h1>{{ studentData.projekt }}</h1>
-    <p class="lead">Autor: {{ studentData.imie }}</p>
-    <button class="btn btn-primary" (click)="pokazAlert()">Sprawdź połączenie</button>
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold">Witaj w To-Do App!</h1>
+    <p class="lead text-muted">Twoje centrum zarządzania zadaniami</p>
+  </div>
+
+  <div class="d-flex flex-column align-items-center shadow-sm p-4 bg-light rounded">
+    <h4 class="mb-4 text-secondary text-uppercase fw-light">Statystyki Twoich zadań</h4>
+
+    <div class="card bg-primary text-white mb-3 shadow-sm w-100" style="max-width: 400px;">
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="card-title mb-0">Wszystkich zadań</h5>
+        </div>
+        <h2 class="mb-0 fw-bold">{{ stats.total }}</h2>
+      </div>
+    </div>
+
+    <div class="card bg-warning text-dark mb-3 shadow-sm w-100" style="max-width: 400px;">
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="card-title mb-0">Do zrobienia</h5>
+        </div>
+        <h2 class="mb-0 fw-bold">{{ stats.active }}</h2>
+      </div>
+    </div>
+
+    <div class="card bg-success text-white mb-4 shadow-sm w-100" style="max-width: 400px;">
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="card-title mb-0">Ukończonych</h5>
+        </div>
+        <h2 class="mb-0 fw-bold">{{ stats.done }}</h2>
+      </div>
+    </div>
+
+    <button class="btn btn-dark btn-lg px-5 mt-2" routerLink="/tasks">
+      Przejdź do zadań
+    </button>
+    <button class="btn btn-primary mt-3"  (click)="pokazAlert()">Sprawdź Informacje</button>
   </div>
 </div>

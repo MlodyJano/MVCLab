@@ -1,23 +1,90 @@
 <div class="container mt-4">
-  <h2>Moje Zadania</h2>
-  
-  <div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Co masz do zrobienia?" 
-           [(ngModel)]="newTaskTitle">
-    <button class="btn btn-success" (click)="addTask()">Dodaj</button>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Moje Zadania</h2>
+    <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+      <i class="bi bi-plus-lg"></i> Dodaj nowe zadanie
+    </button>
   </div>
 
-  <ul class="list-group">
-    @for (task of tasks; track task.id) {
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <input type="checkbox" class="form-check-input me-2" [(ngModel)]="task.completed" (change)="onToggle(task.id)">
-          <span [style.text-decoration]="task.completed ? 'line-through' : 'none'">
-            {{ task.title }}
-          </span>
+  <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="addTaskModalLabel">Nowe Zadanie</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <button class="btn btn-danger btn-sm" (click)="deleteTask(task.id)">Usuń</button>
-      </li>
-    }
-  </ul>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Tytuł</label>
+            <input type="text" class="form-control" [(ngModel)]="newTask.title" placeholder="Wpisz tytuł...">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Termin</label>
+            <input type="date" class="form-control" [(ngModel)]="newTask.date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Opis zadania</label>
+            <textarea class="form-control" rows="3" [(ngModel)]="newTask.description" placeholder="Dodaj szczegóły..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+          <button type="button" class="btn btn-success" (click)="addTask()" data-bs-dismiss="modal">Zapisz zadanie</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<ul class="list-group shadow-sm">
+  @for (task of tasks; track task.id) {
+    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+      
+      <div class="flex-grow-1">
+        @if (editId === task.id) {
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" [(ngModel)]="editTitle">
+            <button class="btn btn-primary" (click)="saveEdit(task.id)">Zapisz</button>
+            <button class="btn btn-secondary" (click)="cancelEdit()">X</button>
+          </div>
+        } @else {
+          <div class="d-flex align-items-start">
+            <input type="checkbox" class="form-check-input me-3 mt-2" 
+                   [checked]="task.completed" (change)="onToggle(task.id)">
+            
+            <div>
+              <span [style.text-decoration]="task.completed ? 'line-through' : 'none'"
+                    [class.text-danger]="isOverdue(task.date) && !task.completed"
+                    [class.fw-bold]="isOverdue(task.date) && !task.completed"
+                    class="h5 d-block mb-0">
+                {{ task.title }}
+              </span>
+
+              <small class="text-muted d-block mt-1">
+                <i class="bi bi-calendar"></i> Termin: {{ task.date }}
+                
+                @if (isOverdue(task.date) && !task.completed) {
+                  <span class="badge bg-danger ms-2">PO TERMINIE</span>
+                }
+              </small>
+
+              @if (task.description) {
+                <small class="text-muted d-block text-truncate" style="max-width: 250px;">
+                  {{ task.description }}
+                </small>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (editId !== task.id) {
+        <div class="ms-3">
+          <button class="btn btn-info btn-sm me-1" [routerLink]="['/tasks', task.id]">Szczegóły <i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-warning btn-sm me-1" (click)="startEdit(task)">Edytuj <i class="bi bi-pencil"></i></button>
+          <button class="btn btn-danger btn-sm" (click)="deleteTask(task.id)">Usuń <i class="bi bi-trash"></i></button>
+        </div>
+      }
+    </li>
+  }
+</ul>
 </div>

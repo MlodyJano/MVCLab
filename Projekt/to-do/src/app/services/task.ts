@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Task } from '../models/task.model';
 
 @Injectable({
-  providedIn: 'root' // To sprawia, że serwis jest dostępny w całej aplikacji
+  providedIn: 'root' 
 })
 export class TaskService {
   private tasks: Task[] = [];
@@ -16,12 +16,16 @@ export class TaskService {
   getTasks(): Task[] {
     return this.tasks;
   }
+  getTaskById(id: number): Task | undefined {
+    return this.tasks.find(t => t.id === id);
+  }
 
-  addTask(title: string) {
+  addTask(title: string, description: string, date: string) {
     const newTask: Task = {
       id: Date.now(),
       title: title,
-      description: '',
+      description: description,
+      date: date,
       completed: false
     };
     this.tasks.push(newTask);
@@ -36,9 +40,17 @@ export class TaskService {
   toggleTaskCompletion(id: number) {
     const task = this.tasks.find(t => t.id === id);
     if (task) {
+      task.completed = !task.completed;
       this.saveTasks();
     }
   }
+  updateTask(id: number, newTitle: string) {
+  const task = this.tasks.find(t => t.id === id);
+  if (task) {
+    task.title = newTitle;
+    this.saveTasks();
+  }
+}
   private saveTasks() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('myTasks', JSON.stringify(this.tasks));
