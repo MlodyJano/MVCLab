@@ -1,6 +1,6 @@
 <div class="container mt-4">
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Moje Zadania</h2>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Moje Zadania <span class="badge bg-secondary fs-6">{{ tasks.length }}</span></h2>
     <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
       <i class="bi bi-plus-lg"></i> Dodaj nowe zadanie
     </button>
@@ -8,56 +8,112 @@
 
   <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content border-0 shadow">
         <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="addTaskModalLabel">Nowe Zadanie</h5>
+          <h5 class="modal-title fw-bold" id="addTaskModalLabel">Nowe Zadanie</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Tytuł</label>
-            <input type="text" class="form-control" [(ngModel)]="newTask.title" placeholder="Wpisz tytuł...">
+        <form #taskForm="ngForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Tytuł</label>
+              <input type="text" name="title" class="form-control" [(ngModel)]="newTask.title" 
+                     required minlength="3" #titleInput="ngModel"
+                     [class.is-invalid]="titleInput.invalid && titleInput.touched" placeholder="Wpisz tytuł...">
+              <div class="invalid-feedback">Tytuł musi mieć min. 3 znaki.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Termin</label>
+              <input type="date" name="date" class="form-control" [(ngModel)]="newTask.date" 
+                     required #dateInput="ngModel"
+                     [class.is-invalid]="dateInput.invalid && dateInput.touched">
+              <div class="invalid-feedback">Data jest wymagana.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Opis zadania</label>
+              <textarea name="description" class="form-control" rows="3" [(ngModel)]="newTask.description" placeholder="Dodaj szczegóły..."></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold"><i class="bi bi-flag-fill"></i> Priorytet</label>
+              <select name="priority" class="form-select" [(ngModel)]="newTask.priority">
+                <option value="low">Niski (Zielony)</option>
+                <option value="medium">Średni (Żółty)</option>
+                <option value="high">Wysoki (Czerwony)</option>
+              </select>
+            </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Termin</label>
-            <input type="date" class="form-control" [(ngModel)]="newTask.date">
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+            <button type="button" class="btn btn-success" (click)="addTask()" 
+                    [disabled]="taskForm.invalid" data-bs-dismiss="modal">Zapisz zadanie</button>
           </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Opis zadania</label>
-            <textarea class="form-control" rows="3" [(ngModel)]="newTask.description" placeholder="Dodaj szczegóły..."></textarea>
-          </div>
-          <div class="mb-3">
-          <label class="form-label fw-bold"><i class="bi bi-flag-fill"></i> Priorytet</label>
-          <select class="form-select" [(ngModel)]="newTask.priority">
-            <option value="low">Niski (Zielony)</option>
-            <option value="medium">Średni (Żółty)</option>
-            <option value="high">Wysoki (Czerwony)</option>
-          </select>
-        </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-          <button type="button" class="btn btn-success" (click)="addTask()" data-bs-dismiss="modal">Zapisz zadanie</button>
-        </div>
+        </form>
       </div>
     </div>
   </div>
 
-<ul class="list-group shadow-sm">
-  @for (task of tasks; track task.id) {
-    <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-0 border-start border-4 mb-2 shadow-sm"
-      [class.border-success]="task.priority === 'low'"
-      [class.border-warning]="task.priority === 'medium'"
-      [class.border-danger]="task.priority === 'high'">
-      
-      <div class="flex-grow-1">
-        @if (editId === task.id) {
-          <div class="input-group input-group-sm">
-            <input type="text" class="form-control" [(ngModel)]="editTitle">
-            <button class="btn btn-primary" (click)="saveEdit(task.id)">Zapisz</button>
-            <button class="btn btn-secondary" (click)="cancelEdit()">X</button>
+  <div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title fw-bold">Edytuj Zadanie</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form #editForm="ngForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Tytuł</label>
+              <input type="text" name="editTitle" class="form-control" [(ngModel)]="taskToEdit.title" 
+                     required minlength="3" #editTitleInput="ngModel"
+                     [class.is-invalid]="editTitleInput.invalid && editTitleInput.touched">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Termin</label>
+              <input type="date" name="editDate" class="form-control" [(ngModel)]="taskToEdit.date" 
+                     required #editDateInput="ngModel"
+                     [class.is-invalid]="editDateInput.invalid && editDateInput.touched">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Priorytet</label>
+              <select name="editPriority" class="form-select" [(ngModel)]="taskToEdit.priority">
+                <option value="low">Niski</option>
+                <option value="medium">Średni</option>
+                <option value="high">Wysoki</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Opis</label>
+              <textarea name="editDesc" class="form-control" rows="3" [(ngModel)]="taskToEdit.description"></textarea>
+            </div>
           </div>
-        } @else {
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Anuluj</button>
+            <button type="button" class="btn btn-warning fw-bold" (click)="saveEditChanges()" 
+                    [disabled]="editForm.invalid" data-bs-dismiss="modal">Zapisz zmiany</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  @if (tasks.length === 0) {
+    <div class="text-center my-5 py-5 text-muted">
+      <i class="bi bi-clipboard-check display-1"></i>
+      <p class="mt-3 fs-4">Wszystko zrobione!</p>
+      <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+        Dodaj pierwsze zadanie
+      </button>
+    </div>
+  }
+
+  <ul class="list-group shadow-sm">
+    @for (task of tasks; track task.id) {
+      <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-0 border-start border-4 mb-2 shadow-sm rounded"
+        [class.border-success]="task.priority === 'low'"
+        [class.border-warning]="task.priority === 'medium'"
+        [class.border-danger]="task.priority === 'high'">
+        
+        <div class="flex-grow-1">
           <div class="d-flex align-items-start">
             <input type="checkbox" class="form-check-input me-3 mt-2" 
                    [checked]="task.completed" (change)="onToggle(task.id)">
@@ -68,7 +124,6 @@
                     [class.fw-bold]="isOverdue(task.date) && !task.completed"
                     class="h5 d-block mb-0">
                 {{ task.title }}
-                
                 <span class="badge rounded-pill ms-2 text-uppercase" style="font-size: 0.6em;"
                       [class.bg-success]="task.priority === 'low'"
                       [class.bg-warning]="task.priority === 'medium'"
@@ -79,36 +134,29 @@
 
               <small class="text-muted d-block mt-1">
                 <i class="bi bi-calendar"></i> Termin: {{ task.date }}
-                
                 @if (isOverdue(task.date) && !task.completed) {
                   <span class="badge bg-danger ms-2">PO TERMINIE</span>
                 }
               </small>
-
-              @if (task.description) {
-                <small class="text-muted d-block text-truncate" style="max-width: 250px;">
-                  {{ task.description }}
-                </small>
-              }
             </div>
           </div>
-        }
-      </div>
+        </div>
 
-      @if (editId !== task.id) {
-        <div class="ms-3">
-          <button class="btn btn-info btn-sm me-1" [routerLink]="['/tasks', task.id]">
+        <div class="ms-3 d-flex">
+          <button class="btn btn-outline-info btn-sm me-1" [routerLink]="['/tasks', task.id]">
             Szczegóły <i class="bi bi-eye"></i>
           </button>
-          <button class="btn btn-warning btn-sm me-1" (click)="startEdit(task)">
+          <button class="btn btn-outline-warning btn-sm me-1" 
+                  (click)="startEdit(task)" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#editTaskModal">
             Edytuj <i class="bi bi-pencil"></i>
           </button>
-          <button class="btn btn-danger btn-sm" (click)="deleteTask(task.id)">
+          <button class="btn btn-outline-danger btn-sm" (click)="deleteTask(task.id)">
             Usuń <i class="bi bi-trash"></i>
           </button>
         </div>
-      }
-    </li>
-  }
-</ul>
+      </li>
+    }
+  </ul>
 </div>

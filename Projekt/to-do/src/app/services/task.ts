@@ -17,8 +17,9 @@ export class TaskService {
     }
   }
   getTasks(): Task[] {
-    return this.tasks;
-  }
+  const priorityOrder = { 'high': 0, 'medium': 1, 'low': 2 };
+  return this.tasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+}
   getTaskById(id: number): Task | undefined {
     return this.tasks.find(t => t.id === id);
   }
@@ -48,10 +49,10 @@ export class TaskService {
       this.saveTasks();
     }
   }
-  updateTask(id: number, newTitle: string) {
-  const task = this.tasks.find(t => t.id === id);
-  if (task) {
-    task.title = newTitle;
+  updateTask(updatedTask: Task) {
+  const index = this.tasks.findIndex(t => t.id === updatedTask.id);
+  if (index !== -1) {
+    this.tasks[index] = updatedTask;
     this.saveTasks();
   }
 }

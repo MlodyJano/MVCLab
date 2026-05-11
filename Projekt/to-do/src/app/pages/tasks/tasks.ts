@@ -24,6 +24,15 @@ export class Tasks {
       priority: 'low' as 'low' | 'medium' | 'high'
   };
 
+  taskToEdit: Task = {
+    id: 0,
+    title: '',
+    description: '',
+    date: '',
+    completed: false,
+    priority: 'low'
+  };
+
   addTask() {
     if (this.newTask.title && this.newTask.date) {
       this.taskService.addTask(this.newTask.title, this.newTask.description, this.newTask.date, this.newTask.priority);
@@ -45,14 +54,19 @@ export class Tasks {
   }
 
   startEdit(task: Task) {
-    this.editId = task.id;
-    this.editTitle = task.title;
+    this.taskToEdit = { ...task };
   }
 
-  saveEdit(id: number) {
-    if (this.editTitle.trim()) {
-      this.taskService.updateTask(id, this.editTitle);
-      this.editId = null; 
+  // saveEdit(id: number) {
+  //   if (this.editTitle.trim()) {
+  //     this.taskService.updateTask(id, this.editTitle);
+  //     this.editId = null; 
+  //   }
+  // }
+
+  saveEditChanges(){
+    if(this.taskToEdit.title && this.taskToEdit.date){
+      this.taskService.updateTask(this.taskToEdit);
     }
   }
 
