@@ -1,6 +1,6 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Moje Zadania <span class="badge bg-secondary fs-6">{{ tasks.length }}</span></h2>
+    <h2>Moje Zadania <span class="badge bg-secondary fs-6">{{ filteredTasks.length }}</span></h2>
     <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
       <i class="bi bi-plus-lg"></i> Dodaj nowe zadanie
     </button>
@@ -96,18 +96,27 @@
     </div>
   </div>
 
-  @if (tasks.length === 0) {
+  <div class="search-container mb-4">
+    <input 
+      type="text" 
+      [(ngModel)]="searchQuery" 
+      placeholder="Wyszukaj zadanie po tytule..." 
+      class="form-control form-control-lg shadow-sm"
+    />
+  </div>
+
+  @if (filteredTasks.length === 0) {
     <div class="text-center my-5 py-5 text-muted">
       <i class="bi bi-clipboard-check display-1"></i>
-      <p class="mt-3 fs-4">Wszystko zrobione!</p>
+      <p class="mt-3 fs-4">Brak zadań spełniających kryteria wyszukiwania.</p>
       <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-        Dodaj pierwsze zadanie
+        Dodaj nowe zadanie
       </button>
     </div>
   }
 
   <ul class="list-group shadow-sm">
-    @for (task of tasks; track task.id) {
+    @for (task of filteredTasks; track task.id) {
       <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-0 border-start border-4 mb-2 shadow-sm rounded"
         [class.border-success]="task.priority === 'low'"
         [class.border-warning]="task.priority === 'medium'"
