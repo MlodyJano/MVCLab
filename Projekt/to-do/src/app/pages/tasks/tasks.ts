@@ -88,12 +88,27 @@ export class Tasks {
 
   filterStatus: 'all' | 'active' | 'completed' = 'all';
 
+  searchQuery: string = '';
   get filteredTasks() {
-  const tasks = this.taskService.getTasks();
-  if (this.filterStatus === 'active') return tasks.filter(t => !t.completed);
-  if (this.filterStatus === 'completed') return tasks.filter(t => t.completed);
-  return tasks;
+  let tasks = this.taskService.getTasks();
+
+  // POPRAWKA LOGIKI STATUSU:
+  // Jeśli status to 'active' LUB domyślny 'all', chcemy widzieć tylko te do zrobienia (!t.completed)
+  if (this.filterStatus === 'active' || this.filterStatus === 'all') {
+    tasks = tasks.filter(t => !t.completed);
+  } else if (this.filterStatus === 'completed') {
+    tasks = tasks.filter(t => t.completed);
   }
+
+  // Filtr wyszukiwarki (zostaje bez zmian)
+  if (this.searchQuery.trim()) {
+    tasks = tasks.filter(task => 
+      task.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
+
+  return tasks;
+}
 
 }
 
